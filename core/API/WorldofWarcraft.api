@@ -1,0 +1,77 @@
+<?php
+function PullGuildMembers($arg) {
+$api_guild_roster = $arg;
+$file_contents = @file_get_contents($api_guild_roster); // omit warnings
+$guildRoster = json_decode($file_contents, true);
+foreach($guildRoster['members'] as $member) {
+	echo "<div class='col-xs-3'>";
+	echo "<div class='panel panel-info'>";
+		echo "<div class='panel-heading'>";
+	echo "<img class='img-rounded img-thumbnail' src='http://render-api-us.worldofwarcraft.com/static-render/us/".$member['character']['thumbnail']."'>";
+	echo $member['character']['name']." - ". $member['character']['realm'];
+	echo "</div>";
+		echo "<div class='panel-body'>";
+	echo $member['character']['level']." ".$member['character']['race']." ".$member['character']['spec']['name']. " ".$member['character']['class']."<br />";
+	echo $member['character']['achievementPoints'];
+	echo "</div>";
+	echo "</div>";
+	echo "</div>";
+	//foreach($member['character'] as $character) {
+		//print_r($character);
+	//}
+}
+}
+function GuildDetails($arg) {
+$realm_name = str_replace(" ", "%", GUILD_REALM);
+$guild_name = str_replace(" ", "%", GUILD_NAME);
+$api_guild_roster = API_URL;
+$file_contents = @file_get_contents($api_guild_roster); // omit warnings
+$guildRoster = json_decode($file_contents, true);
+$guildName = $guildRoster['name'];
+$guildRealm = $guildRoster['realm'];
+$guildBattleGroup = $guildRoster['battlegroup'];
+$guildLevel = $guildRoster['level'];
+$faction = $guildRoster['side'];
+$achievementPoints = $guildRoster['achievementPoints'];
+switch($arg) {
+	case "GuildName":
+	return $guildName;
+	break;
+	case "GuildRealm":
+	return $guildRealm;
+	break;
+	case "GuildBattleGroup":
+	return $guildBattleGroup;
+	break;
+	case "GuildLevel":
+	return $guildLevel;
+	break;
+	case "GuildFaction":
+	switch($guildRoster['side']) {
+	case 0:
+	return "Alliance";
+	break;
+	case 1:
+	return "Horde";
+	break;
+}
+	break;
+	case "GuildAP":
+	return $achievementPoints;
+	break;
+	case "MemberCount":
+	return count($guildRoster['members']);
+	break;
+	case "Roster":
+	PullGuildMembers(API_URL);
+	break;
+	}
+
+}
+function UserDetails() {
+	$api_user_roster = "https://us.api.battle.net/wow/user/characters?access_token=".ACCESS_TOKEN."";
+	$file_contents = @file_get_contents($api_user_roster); // omit warnings
+	$userRoster = json_decode($file_contents, true);
+	print_r($userRoster);
+
+}
